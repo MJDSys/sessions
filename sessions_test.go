@@ -46,6 +46,7 @@ func TestFlashes(t *testing.T) {
 	// Round 1 ----------------------------------------------------------------
 
 	req, _ = http.NewRequest("GET", "http://localhost:8080/", nil)
+	req = StoreRegistry(req)
 	rsp = NewRecorder()
 	// Get a session.
 	if session, err = store.Get(req, "session-key"); err != nil {
@@ -78,6 +79,7 @@ func TestFlashes(t *testing.T) {
 	// Round 2 ----------------------------------------------------------------
 
 	req, _ = http.NewRequest("GET", "http://localhost:8080/", nil)
+	req = StoreRegistry(req)
 	req.Header.Add("Cookie", cookies[0])
 	rsp = NewRecorder()
 	// Get a session.
@@ -112,6 +114,7 @@ func TestFlashes(t *testing.T) {
 	// Custom type
 
 	req, _ = http.NewRequest("GET", "http://localhost:8080/", nil)
+	req = StoreRegistry(req)
 	rsp = NewRecorder()
 	// Get a session.
 	if session, err = store.Get(req, "session-key"); err != nil {
@@ -138,6 +141,7 @@ func TestFlashes(t *testing.T) {
 	// Custom type
 
 	req, _ = http.NewRequest("GET", "http://localhost:8080/", nil)
+	req = StoreRegistry(req)
 	req.Header.Add("Cookie", cookies[0])
 	rsp = NewRecorder()
 	// Get a session.

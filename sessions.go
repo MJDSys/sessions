@@ -5,12 +5,11 @@
 package sessions
 
 import (
+	"context"
 	"encoding/gob"
 	"fmt"
 	"net/http"
 	"time"
-
-	"github.com/gorilla/context"
 )
 
 // Default flashes key.
@@ -121,18 +120,23 @@ type contextKey int
 // registryKey is the key used to store the registry in the context.
 const registryKey contextKey = 0
 
-// GetRegistry returns a registry instance for the current request.
-func GetRegistry(r *http.Request) *Registry {
-	registry := context.Get(r, registryKey)
-	if registry != nil {
-		return registry.(*Registry)
-	}
+// StoreRegistry creates and stores a registry in a request
+func StoreRegistry(r *http.Request) *http.Request {
 	newRegistry := &Registry{
 		request:  r,
 		sessions: make(map[string]sessionInfo),
 	}
-	context.Set(r, registryKey, newRegistry)
-	return newRegistry
+
+	return r.WithContext(context.WithValue(r.Context(), registryKey, newRegistry))
+}
+
+// GetRegistry returns a registry instance for the current request.
+func GetRegistry(r *http.Request) *Registry {
+	registry := r.Context().Value(registryKey)
+	if registry != nil {
+		return registry.(*Registry)
+	}
+	panic("Registry not set in request context!")
 }
 
 // Registry stores sessions used during a request.
